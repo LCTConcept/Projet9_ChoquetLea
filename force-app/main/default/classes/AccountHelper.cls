@@ -23,7 +23,7 @@ public class AccountHelper {
         
         // Collecte des comptes liés aux commandes mises à jour
         for (Order ord : ordersToUpdate) {
-            if (ord.Status == 'Activated') {
+            if (ord.Status == 'Ordered') {
                 accountIds.add(ord.AccountId);
             }
         }
@@ -37,7 +37,7 @@ public class AccountHelper {
         List<OrderItem> orderItems = [
             SELECT OrderId, Quantity, UnitPrice, Order.AccountId 
             FROM OrderItem 
-            WHERE OrderId IN (SELECT Id FROM Order WHERE AccountId IN :accountIds AND Status = 'Activated')
+            WHERE OrderId IN (SELECT Id FROM Order WHERE AccountId IN :accountIds AND Status = 'Ordered')
         ];
 
         

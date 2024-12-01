@@ -37,17 +37,17 @@ public class UpdateAccountsBatchTest {
         Account accountA = [SELECT Id FROM Account WHERE Name = 'Test Account A' LIMIT 1];
         Account accountB = [SELECT Id FROM Account WHERE Name = 'Test Account B' LIMIT 1];
         
-        // Récupérer les commandes de chaque compte et les mettre à jour avec le statut 'Activated'
+        // Récupérer les commandes de chaque compte et les mettre à jour avec le statut 'Ordered'
         List<Order> ordersA = [SELECT Id, Status FROM Order WHERE AccountId = :accountA.Id];
         List<Order> ordersB = [SELECT Id, Status FROM Order WHERE AccountId = :accountB.Id];
         
         for (Order order : ordersA) {
-            order.Status = 'Activated';
+            order.Status = 'Ordered';
         }
         update ordersA;
         
         for (Order order : ordersB) {
-            order.Status = 'Activated';
+            order.Status = 'Ordered';
         }
         update ordersB;
 
@@ -134,7 +134,7 @@ public class UpdateAccountsBatchTest {
         // Activer les commandes pour le compte
         List<Order> orders = [SELECT Id FROM Order WHERE AccountId = :accountA.Id];
         for (Order order : orders) {
-            order.Status = 'Activated';
+            order.Status = 'Ordered';
         }
         update orders;
         
@@ -165,7 +165,7 @@ public class UpdateAccountsBatchTest {
         // Activer les commandes pour le compte
         List<Order> orders = [SELECT Id FROM Order WHERE AccountId = :accountA.Id];
         for (Order order : orders) {
-            order.Status = 'Activated';
+            order.Status = 'Ordered';
         }
         update orders;
         
@@ -195,7 +195,7 @@ public class UpdateAccountsBatchTest {
         // Activer les commandes pour ces comptes
         List<Order> ordersA = [SELECT Id, Status FROM Order WHERE AccountId = :accountA.Id];
         for (Order order : ordersA) {
-            order.Status = 'Activated';
+            order.Status = 'Ordered';
         }
         update ordersA;   
         

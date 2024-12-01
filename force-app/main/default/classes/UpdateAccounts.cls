@@ -10,18 +10,20 @@ global class UpdateAccounts implements Database.Batchable<sObject>, Schedulable 
         // Sélectionner tous les comptes ayant au moins une commande activée
         return Database.getQueryLocator([
             SELECT Id FROM Account 
-            WHERE Id IN (SELECT AccountId FROM Order WHERE Status = 'Activated')
+            WHERE Id IN (SELECT AccountId FROM Order WHERE Status = 'Ordered')
         ]);
+       
+
     }
     
     global void execute(Database.BatchableContext info, List<Account> scope) {
         
-        // Requête de la liste des commandes avec statut "Activated"
+        // Requête de la liste des commandes avec statut "Ordered"
         List<Order> listOrders = [
             SELECT Id, TotalAmount, AccountId, Status
             FROM Order
             WHERE AccountId IN :scope
-            AND Status = 'Activated'
+            AND Status = 'Ordered'
         ];
         
         // Mise à jour
