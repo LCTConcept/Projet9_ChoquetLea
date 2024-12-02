@@ -50,8 +50,8 @@ public class UpdateAccountsBatchTest {
             order.Status = 'Ordered';
         }
         update ordersB;
-
-		// Set le destinataire du mail du batch
+        
+        // Set le destinataire du mail du batch
         String adressEmail = 'l.m.choquet@gmail.com';  
         
         // Exécuter le batch
@@ -102,7 +102,7 @@ public class UpdateAccountsBatchTest {
         Decimal initialRevenueB = accountB.Chiffre_d_affaire__c;
         System.debug('Chiffre d\'affaire initial pour Account B : ' + initialRevenueB);
         
-		// Set le destinataire du mail du batch
+        // Set le destinataire du mail du batch
         String adressEmail = 'l.m.choquet@gmail.com';  
         
         // Exécuter le batch
@@ -147,16 +147,23 @@ public class UpdateAccountsBatchTest {
         Database.executeBatch(batch, 200); // Exécuter le batch avec un batch size de 200
         
         Test.stopTest();
-               
-        /*Vérification de l'envoi du mail grâce au try/catch du bloc finish 
-* Si l'email ne s'envoie pas, on rentre dans le catch. 
-* Donc pas besoin d'assert pour ce test. 
-* La vérification se fait au niveau du DEBUG ligne 64 du batch Update Accounts
-* Où la valeur de emailSent doit être égale à true si l'email s'est bien envoyé */
+        
+        // Asserts pour vérifier la bonne execution
+        AsyncApexJob job = [SELECT Id, Status, NumberOfErrors FROM AsyncApexJob ORDER BY CreatedDate DESC LIMIT 1];
+        System.assertEquals('Completed', job.Status, 'Le batch devrait se terminer avec succès.');
+        
+        
+        
+        /*PRECISION :
+* Vérification de l'envoi du mail grâce au try/catch du bloc finish 
+* Donc pas besoin d'assert pour ce test.
+* Si test réussi : DEBUG ligne 32 de la classe BatchEmailSender sera dans le log
+*/
+        
         
     }
     
-	@isTest // TEST USE CASE #4 - Échec de l'envoi d'email
+    @isTest // TEST USE CASE #4 - Échec de l'envoi d'email
     static void testBatchExecutionAndEmailNotificationFailure() {
         
         // Récupérer les comptes de test
@@ -178,14 +185,20 @@ public class UpdateAccountsBatchTest {
         Database.executeBatch(batch, 200);
         Test.stopTest();
         
-        /*Vérification de l'envoi du mail grâce au try/catch du bloc finish 
-		* Ici, on doit rentrer dans le catch
-		* La vérification se fait au niveau du DEBUG ligne 71 du batch Update Accounts qui indique une exception
-		* Et DEBUG ligne 72 où la valeur de emailSent doit être égale à false car l'email ne s'est pas envoyé */	 
+        // Asserts pour vérifier le test
+        AsyncApexJob job = [SELECT Id, Status, NumberOfErrors FROM AsyncApexJob ORDER BY CreatedDate DESC LIMIT 1];
+        System.assertEquals('Completed', job.Status, 'Le batch devrait se terminer même si l\'email échoue.');
+        
+        
+        /*PRECISION :
+* Vérification de l'envoi du mail grâce au try/catch du bloc finish 
+* Donc pas besoin d'assert pour ce test.
+* Si test réussi : DEBUG ligne 35 de la classe BatchEmailSender sera dans le log avec le message d'erreur
+*/ 
         
     }
     
-  
+    
     
     @isTest // TEST USE CASE 5 - Vérif schedule
     static void testScheduledExecution() {
@@ -202,14 +215,19 @@ public class UpdateAccountsBatchTest {
         // Set le destinataire du mail du batch
         String adressEmail = 'l.m.choquet@gmail.com'; 
         
-        // Nom unique pour la tâche planifiée
+        // Configurer et planifier le scheduler
         String jobName = 'TestScheduledBatchJob';
+        String cronExpression = '0 0 0 24 12 ? 2024'; // Planification pour le 24 décembre 2024 - Un batch sous le sapin !
         
-        // Planifier le batch
-        String cronExpression = '0 0 0 24 12 ? 2024'; // Un batch sous le sapin
+        // Créer une instance du scheduler et définir l'adresse email
+        UpdateAccountsBatchScheduler scheduler = new UpdateAccountsBatchScheduler();
+        scheduler.setEmailAddress(adressEmail);
+        
+        // Tester la planification
         Test.startTest();
-        System.schedule(jobName, cronExpression, new UpdateAccounts(adressEmail));
+        System.schedule(jobName, cronExpression, scheduler);
         Test.stopTest();
+        
         
         // Vérif si le batch a été correctement planifié
         CronTrigger scheduledJob = [SELECT Id, CronJobDetail.Name, State
@@ -221,5 +239,5 @@ public class UpdateAccountsBatchTest {
         System.assertEquals('WAITING', scheduledJob.State, 'Le job devrait être en attente d\'exécution.');
         
     }
-  
+    
 }
