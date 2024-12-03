@@ -1,20 +1,3 @@
 <apex:page controller="MyTeamOrdersController">
-    <apex:form >
-        <div style="font-family: Arial, sans-serif; margin: 20px;">
-            <h1 style="color: #333;">
-                Commandes de mon équipe :
-            </h1>
-            <!-- Affichage du total des commandes -->
-            <p>
-                Somme totale des commandes :  
-               <!--  <apex:outputText value="{!SumOrders}" /> €. -->
-            </p>
-            
-            <!-- Message si aucune commande validée n'existe -->
-            <!--<apex:outputPanel rendered="{!SumOrders == 0}">
-                <p style="color: red;">Pas de commande validée trouvée pour cette équipe.</p>
-            </apex:outputPanel>-->
-            
-        </div>
-    </apex:form>
+    // Non utilisé, remplacé par le report. 
 </apex:page>
