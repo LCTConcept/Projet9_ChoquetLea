@@ -1,5 +1,5 @@
 @isTest
-private class TestUpdateAccountCA {
+private class UpdateAccountCATest {
     
     // Méthode pour initialiser les données de test
     @testSetup
@@ -102,7 +102,7 @@ private class TestUpdateAccountCA {
     
     
     @isTest //TEST USE CASE #3
-    static void updateAccountRevenueWithHundredOrders() {
+    static void updateAccountRevenueWithTwoHundredOrders() {
         // Récup les données nécessaires pour l'Account
         Account accountA = [SELECT Id FROM Account WHERE Name = 'Test Account A' LIMIT 1];
       	Product2 prod = TestDataFactory.createProduct(true);
@@ -113,7 +113,7 @@ private class TestUpdateAccountCA {
         // Créer une liste pour stocker les commandes et les OrderItems
         List<Order> orders = new List<Order>();
         List<OrderItem> orderItems = new List<OrderItem>();
-        for (Integer i = 0; i < 100; i++) {
+        for (Integer i = 0; i < 201; i++) {
             Order ord = TestDataFactory.createOrder(accountA.Id, false);
             orders.add(ord);
         }
