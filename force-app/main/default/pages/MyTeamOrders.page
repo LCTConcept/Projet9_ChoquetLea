@@ -1,3 +1,7 @@
-<apex:page controller="MyTeamOrdersController">
-    // Non utilisé, remplacé par le report. 
+<apex:page controller="MyTeamOrdersController" >
+    <div>
+        <h1>
+            Sum of my team orders: <apex:outputText value="{!SumOrders}" />
+        </h1>
+    </div>
 </apex:page>
